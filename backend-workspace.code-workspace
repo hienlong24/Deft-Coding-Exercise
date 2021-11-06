@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\frontend"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "C:\\Users\\hienl\\AppData\\Local\\Microsoft\\WindowsApps\\python3.9.exe",
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [ 
+
+			{
+				"name": "Python: Current File",
+				"type": "python",
+				"request": "launch",
+				"program": "${file}",
+				"console": "integratedTerminal"
+			}
+		]
+	}
+}
