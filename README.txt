@@ -6,6 +6,7 @@ pip install flask
 pip install flask-sqlalchemy
 npm install axios
 yarn add use-places-autocomplete
+npm install weather-icons-react --save (run this in frontend/ folder, where package.json file is)
 
 
 style={{position: "relative", top: "-1100px", left: "500px", display: 'flex',

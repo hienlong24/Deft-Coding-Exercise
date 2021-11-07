@@ -5,7 +5,8 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng
 } from "react-places-autocomplete";
-import {Search} from 'semantic-ui-react';
+import { WiDayCloudy, WiDaySunny, WiDayRainWind } from 'weather-icons-react';
+import img1 from './images/01.png'
 
 function App() {
   const FLASK_SERVER = Object.freeze({
@@ -23,32 +24,20 @@ function App() {
     setAddress(value);
     setCoordinates(latLng);
     console.log(coordinates)
-      const requestOptions = {
-        method: 'POST',
-        Headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(latLng)
+    const requestOptions = {
+      method: 'POST',
+      Headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(latLng)
     };
-      fetch('http://localhost:5000/weather', requestOptions)
-          .then(response => response.json())
-          .then(data => setWeather(data));
-    
+    fetch('http://localhost:5000/weather', requestOptions)
+      .then(response => response.json())
+      .then(data => setWeather(data));
+
   };
 
-  // useEffect(() => {
-  //   const requestOptions = {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ title: 'React Hooks POST Request Example' })
-  //   };
-  //   fetch('localhost:3000/weather', requestOptions)
-  //       .then(response => response.json())
-  //       .then(data => setPostId(data.id));
-
-// empty dependency array means this effect will only run once (like componentDidMount in classes)
-// }, []);
-
   return (
-    <div className="App" style={{background: "#282c34"}}>
+    <div className="App" style={{ background: "#282c34" }}>
+
       {/* <header className="App-header"  style={{margin:"0px 600px 450px 0px"}}>
         <p style={{margin:"0px 0px 500px 0px"}}>
           Deft Weather Forecast
@@ -63,7 +52,7 @@ function App() {
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div>
 
-            <input style={{height: "50px", width: "400px", justifyContent: 'flex-start',background: '#61556f',color:'white',fontSize:'12pt', marginTop: "10px"}} {...getInputProps({ placeholder: "Search location" })}/>
+            <input style={{ height: "50px", width: "400px", justifyContent: 'flex-start', background: '#61556f', color: 'white', fontSize: '12pt', marginTop: "10px" }} {...getInputProps({ placeholder: "Search location" })} />
 
             <div>
               {loading ? <div>...loading</div> : null}
@@ -83,15 +72,24 @@ function App() {
           </div>
         )}
       </PlacesAutocomplete>
+      {weather ?
+        <div style={{ background: '#61556f', height: '500px', width: '300px', margin: '100px 0px 0px 10px' }}>
+          <p>{weather['day1']['date']}</p>
+          <p>{weather['day1']['min_temp_value'] + weather['day1']['unit']}</p>
+          <p>{weather['day1']['max_temp_value'] + weather['day1']['unit']}</p>
+          {weather['day1']['condition']['cloudy'] ?
+            <img className="image" src={img1}/>
+            :
+            weather['day1']['condition']['mostly_cloudy'] ?
+              <img className="image" src={img1} /> : <img className="image" src={img1} />}
+        </div>
+        :
+        null}
 
-      <div style={{background: '#61556f', height: '500px', width:'300px', margin:'100px 0px 0px 10px'}}>
-        <p>{weather['date']}</p>
+      <div style={{ background: '#61556f', height: '500px', width: '300px', margin: '100px 0px 0px 0px' }}>
 
       </div>
-      <div style={{background: '#61556f', height: '500px', width:'300px', margin:'100px 0px 0px 0px'}}>
-
-      </div>
-      <div style={{background: '#61556f', height: '500px', width:'300px', margin:'100px 0px 0px 10px'}}>
+      <div style={{ background: '#61556f', height: '500px', width: '300px', margin: '100px 0px 0px 10px' }}>
 
       </div>
 

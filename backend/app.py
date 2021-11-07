@@ -36,7 +36,14 @@ def getWeather():
     print("===============================================")
     print(forecast_data['DailyForecasts'][0])
     day1 = get_daily_forecast(forecast_data['DailyForecasts'][0])
-    return day1
+    day2 = get_daily_forecast(forecast_data['DailyForecasts'][1])
+    day3 = get_daily_forecast(forecast_data['DailyForecasts'][2])
+    result = {}
+    result['day1'] = day1
+    result['day2'] = day2
+    result['day3'] = day3
+    print(result)
+    return result
 
 def get_daily_forecast(data):
     date = data['Date']
@@ -47,8 +54,18 @@ def get_daily_forecast(data):
     min_temp_value = min_temp['Value']
     max_temp = temperature['Maximum']
     max_temp_value = max_temp['Value']
-    condition = data['Day']['IconPhrase']
-    result = {'date': formatted_date, 'min_temp': min_temp, 'min_temp_value': min_temp_value, 
-                'max_temp': max_temp, 'max_temp_value': max_temp_value, 
-                'condition': condition}
+    unit = max_temp['Unit']
+    iconPhase = data['Day']['IconPhrase']
+    cloudy = False
+    mostly_cloudy = True
+    sunny = False
+    # if iconPhase == 'Cloudy':
+    #     cloudy = True
+    # elif iconPhase == 'Mostly cloudy':
+    #     mostly_cloudy = True
+    # else:
+    #     sunny = True
+    condition = {'cloudy': cloudy, 'mostly_cloudy': mostly_cloudy, 'sunny': sunny}
+
+    result = {'date': formatted_date, 'min_temp_value': min_temp_value, 'max_temp_value': max_temp_value, 'unit': unit, 'condition': condition}
     return result
