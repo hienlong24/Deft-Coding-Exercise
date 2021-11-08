@@ -5,7 +5,7 @@ import urllib.request
 import global_config
 import json
 import time
-from constants import URLS
+from constants import URLS, WEATHER_RESPONSE
 from datetime import datetime
 
 APP, DB = app_factory.create_app()
@@ -20,16 +20,26 @@ def getWeather():
     latlgn = json.loads(data.decode('utf-8'))
     latitude = latlgn['lat']
     longitude = latlgn['lng']
+    source=""
 
+    # if not (validate_geolocation(latitude, longitude)):
+    #     return WEATHER_RESPONSE
     location_key_url = URLS.LOCATION_KEY_URL.value + ACCU_WEATHER_API_KEY + "&q=" + str(longitude) + "%2C" + str(latitude)
-    source = urllib.request.urlopen(location_key_url).read()
-
-    # converting JSON data to a dictionary
-    list_of_data = json.loads(source)
-    location_key = list_of_data['Key']
-
+    try: 
+        source = urllib.request.urlopen(location_key_url).read()
+        # converting JSON data to a dictionary
+        list_of_data = json.loads(source)
+        location_key = list_of_data['Key']
+    except Exception as e:
+        print(e)
+        return WEATHER_RESPONSE
+    
     forecast_url = URLS.FORECAST_URL.value + location_key + "?apikey=" + ACCU_WEATHER_API_KEY
-    forecast_info = urllib.request.urlopen(forecast_url).read()
+    try:
+        forecast_info = urllib.request.urlopen(forecast_url).read()
+    except Exception as e:
+        print(e)
+        return WEATHER_RESPONSE
 
     # converting JSON data to a dictionary
     forecast_data = json.loads(forecast_info)
@@ -55,17 +65,23 @@ def get_daily_forecast(data):
     max_temp = temperature['Maximum']
     max_temp_value = max_temp['Value']
     unit = max_temp['Unit']
-    iconPhase = data['Day']['IconPhrase']
-    cloudy = False
-    mostly_cloudy = True
-    sunny = False
-    # if iconPhase == 'Cloudy':
-    #     cloudy = True
-    # elif iconPhase == 'Mostly cloudy':
-    #     mostly_cloudy = True
-    # else:
-    #     sunny = True
-    condition = {'cloudy': cloudy, 'mostly_cloudy': mostly_cloudy, 'sunny': sunny}
+    condition = data['Day']['Icon']
 
     result = {'date': formatted_date, 'min_temp_value': min_temp_value, 'max_temp_value': max_temp_value, 'unit': unit, 'condition': condition}
     return result
+
+def validate_geolocation(lat, lon):
+    """Validate geolocation
+
+    Args:
+        lat (int): latitude
+        lon (int): longitude
+    """
+    lat_max = 90.0
+    lat_min = -90.0
+    lon_max = 180
+    lon_min = 180
+    if (lat < lat_min) or (lat > lat_max) or (lon < lon_min) or (lon > lon_max):
+        return False
+    else:
+        return True
