@@ -4,7 +4,6 @@ import app_factory
 import urllib.request
 import global_config
 import json
-import time
 from constants import URLS, WEATHER_RESPONSE
 from datetime import datetime
 
@@ -13,19 +12,24 @@ CORS(APP)
 ACCU_WEATHER_API_KEY = global_config.get_weather_api_key()
 URL = "http://dataservice.accuweather.com/locations/v1/cities/US/search?apikey=t7NohZ4gbjD2yyTGZGr5v2Hw491tOtrG&q=dayton"
 
-@APP.route('/weather',methods=['POST'])
+
+@APP.route('/weather', methods=['POST'])
 def getWeather():
+    """Get 3 days forecast
+
+    Returns:
+        result: a dictionary contains 3 day forecast
+    """
 
     data = request.data
     latlgn = json.loads(data.decode('utf-8'))
     latitude = latlgn['lat']
     longitude = latlgn['lng']
-    source=""
+    source = ""
 
-    # if not (validate_geolocation(latitude, longitude)):
-    #     return WEATHER_RESPONSE
-    location_key_url = URLS.LOCATION_KEY_URL.value + ACCU_WEATHER_API_KEY + "&q=" + str(longitude) + "%2C" + str(latitude)
-    try: 
+    location_key_url = URLS.LOCATION_KEY_URL.value + ACCU_WEATHER_API_KEY + \
+        "&q=" + str(longitude) + "%2C" + str(latitude)
+    try:
         source = urllib.request.urlopen(location_key_url).read()
         # converting JSON data to a dictionary
         list_of_data = json.loads(source)
@@ -33,8 +37,9 @@ def getWeather():
     except Exception as e:
         print(e)
         return WEATHER_RESPONSE
-    
-    forecast_url = URLS.FORECAST_URL.value + location_key + "?apikey=" + ACCU_WEATHER_API_KEY
+
+    forecast_url = URLS.FORECAST_URL.value + \
+        location_key + "?apikey=" + ACCU_WEATHER_API_KEY
     try:
         forecast_info = urllib.request.urlopen(forecast_url).read()
     except Exception as e:
@@ -43,8 +48,7 @@ def getWeather():
 
     # converting JSON data to a dictionary
     forecast_data = json.loads(forecast_info)
-    print("===============================================")
-    print(forecast_data['DailyForecasts'][0])
+    # Get daily forcast and create a dictionary with 3 day forecast
     day1 = get_daily_forecast(forecast_data['DailyForecasts'][0])
     day2 = get_daily_forecast(forecast_data['DailyForecasts'][1])
     day3 = get_daily_forecast(forecast_data['DailyForecasts'][2])
@@ -55,10 +59,11 @@ def getWeather():
     print(result)
     return result
 
+
 def get_daily_forecast(data):
     date = data['Date']
     datetime_object = datetime.fromisoformat(date)
-    formatted_date=datetime_object.strftime("%a %b %d")
+    formatted_date = datetime_object.strftime("%a %b %d")
     temperature = data['Temperature']
     min_temp = temperature['Minimum']
     min_temp_value = min_temp['Value']
@@ -67,21 +72,6 @@ def get_daily_forecast(data):
     unit = max_temp['Unit']
     condition = data['Day']['Icon']
 
-    result = {'date': formatted_date, 'min_temp_value': min_temp_value, 'max_temp_value': max_temp_value, 'unit': unit, 'condition': condition}
+    result = {'date': formatted_date, 'min_temp_value': min_temp_value,
+              'max_temp_value': max_temp_value, 'unit': unit, 'condition': condition}
     return result
-
-def validate_geolocation(lat, lon):
-    """Validate geolocation
-
-    Args:
-        lat (int): latitude
-        lon (int): longitude
-    """
-    lat_max = 90.0
-    lat_min = -90.0
-    lon_max = 180
-    lon_min = 180
-    if (lat < lat_min) or (lat > lat_max) or (lon < lon_min) or (lon > lon_max):
-        return False
-    else:
-        return True
