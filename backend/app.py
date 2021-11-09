@@ -7,7 +7,7 @@ import json
 from constants import URLS, WEATHER_RESPONSE
 from datetime import datetime
 
-APP, DB = app_factory.create_app()
+APP = app_factory.create_app()
 CORS(APP)
 ACCU_WEATHER_API_KEY = global_config.get_weather_api_key()
 URL = "http://dataservice.accuweather.com/locations/v1/cities/US/search?apikey=t7NohZ4gbjD2yyTGZGr5v2Hw491tOtrG&q=dayton"
