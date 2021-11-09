@@ -1,8 +1,11 @@
-Requirements
+This is a full stack three day weather forecast app using Flask in the backend, and React in the frontend.
+
+Requirements:
+
+python 3.9
 nodejs
-pip install -r requirements.txt
-Windows 10
-Install python 3.9
-pip install flask
-pip install flask-sqlalchemy
-yarn add use-places-autocomplete
+npm
+yarn
+ 
+flask
+react-places-autocomplete
